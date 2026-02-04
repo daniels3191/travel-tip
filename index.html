@@ -71,6 +71,18 @@
                 </section>
             </section>
         </div>
+        <dialog id="dialog">
+            <form onsubmit="app.onSaveLoc(this)" method="dialog">
+                <input class="address" type="text" value="" required>
+                <input class="rate" type="text" value="3" pattern="[1-5]" required>
+                <div class="actions">
+                    <button>Save</button>
+                    <button type="button" onclick="app.onCloseModal()" id="close">Cancel</button>
+                </div>
+
+            </form>
+
+        </dialog>
     </main>
     <pre class="debug" hidden></pre>
     <div class="user-msg"></div>

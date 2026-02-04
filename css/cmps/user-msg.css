@@ -11,3 +11,10 @@
     bottom: 10px;
     transition: bottom .5s;
 }
+
+dialog .actions{
+    display: flex;
+    justify-content: space-between;
+
+    margin-block-start: 10px;
+}

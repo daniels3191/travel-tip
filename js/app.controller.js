@@ -16,6 +16,8 @@ window.app = {
     onShareLoc,
     onSetSortBy,
     onSetFilterBy,
+    onCloseModal,
+    onSaveLoc,
 }
 
 function onInit() {
@@ -95,24 +97,54 @@ function onSearchAddress(ev) {
 }
 
 function onAddLoc(geo) {
-    const locName = prompt('Loc name', geo.address || 'Just a place')
-    if (!locName) return
+    
+    const elDialog = document.getElementById('dialog')
+    elDialog.dataset.location = JSON.stringify(geo)
+    const elAddress = elDialog.querySelector('.address')
+    elAddress.value = geo.address
+    dialog.showModal()
+}
 
-    const loc = {
-        name: locName,
-        rate: +prompt(`Rate (1-5)`, '3'),
-        geo
+function onSaveLoc(elForm) {
+
+    const elAddress = elForm.querySelector('.address')
+    const locName = elAddress.value
+    const elRate = elForm.querySelector('.rate')
+    const rate = elRate.value
+    const elDialog = document.getElementById('dialog')
+    const location = JSON.parse(elDialog.dataset.location)
+
+    if (!location['id']) {
+        const loc = {
+            name: locName,
+            rate,
+            geo: location
+        }
+        locService.save(loc)
+            .then((savedLoc) => {
+                flashMsg(`Added Location (id: ${savedLoc.id})`)
+                utilService.updateQueryParams({ locId: savedLoc.id })
+                loadAndRenderLocs()
+            })
+            .catch(err => {
+                console.error('OOPs:', err)
+                flashMsg('Cannot add location')
+            })
+    } else {
+        if (rate !== location.rate || locName !== location.name) {
+            location.rate = rate
+            location.name = locName
+            locService.save(location)
+                .then(savedLoc => {
+                    flashMsg(`Rate was set to: ${savedLoc.rate}`)
+                    loadAndRenderLocs()
+                })
+                .catch(err => {
+                    console.error('OOPs:', err)
+                    flashMsg('Cannot update location')
+                })
+        }
     }
-    locService.save(loc)
-        .then((savedLoc) => {
-            flashMsg(`Added Location (id: ${savedLoc.id})`)
-            utilService.updateQueryParams({ locId: savedLoc.id })
-            loadAndRenderLocs()
-        })
-        .catch(err => {
-            console.error('OOPs:', err)
-            flashMsg('Cannot add location')
-        })
 }
 
 function loadAndRenderLocs() {
@@ -138,23 +170,18 @@ function onPanToUserPos() {
         })
 }
 
+
 function onUpdateLoc(locId) {
     locService.getById(locId)
         .then(loc => {
-            const rate = +prompt('New rate?', loc.rate)
-            if (rate && rate !== loc.rate) {
-                loc.rate = rate
-                locService.save(loc)
-                    .then(savedLoc => {
-                        flashMsg(`Rate was set to: ${savedLoc.rate}`)
-                        loadAndRenderLocs()
-                    })
-                    .catch(err => {
-                        console.error('OOPs:', err)
-                        flashMsg('Cannot update location')
-                    })
+            const elAddress = document.querySelector('form .address')
+            elAddress.value = loc.name
+            const elRate = document.querySelector('form .rate')
+            elRate.value = loc.rate
+            const elDialog = document.getElementById('dialog')
+            elDialog.dataset.location = JSON.stringify(loc)
+            dialog.showModal()
 
-            }
         })
 }
 
@@ -223,7 +250,7 @@ function getFilterByFromQueryParams() {
     const queryParams = new URLSearchParams(window.location.search)
     const txt = queryParams.get('txt') || ''
     const minRate = queryParams.get('minRate') || 0
-    locService.setFilterBy({txt, minRate})
+    locService.setFilterBy({ txt, minRate })
 
     document.querySelector('input[name="filter-by-txt"]').value = txt
     document.querySelector('input[name="filter-by-rate"]').value = minRate
@@ -263,7 +290,7 @@ function renderLocStats() {
     locService.getLocCountByRateMap().then(stats => {
         handleStats(stats, 'loc-stats-rate')
     })
-    
+
     locService.getLocCountByLastUpdated().then(stats => {
         handleStats(stats, 'loc-stats-last-updated')
     })
@@ -317,4 +344,8 @@ function cleanStats(stats) {
         return acc
     }, [])
     return cleanedStats
+}
+
+function onCloseModal() {
+    dialog.close()
 }
