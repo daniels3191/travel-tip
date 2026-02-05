@@ -93,4 +93,8 @@ Here is a sample usage:
 <button onclick="app.onToggleTheme()">Toggle Theme</button>
 ```
 
-
+## Additional Features
+1. Delete Confirmation - Confirmation dialog (using `confirm()`) before removing locations
+2. Sort by Creation Time - Locations can be sorted by `createdAt` timestamp
+3. Enhanced Search - Text filter searches both `loc.name` and `loc.geo.address`
+4. Distance Display - Shows distance from user position to each location 
