@@ -11,7 +11,7 @@ TravelTip is an app that keeps a list of favorite locations
 - The User can pan the map to his own geo-location
 
 ## Locations CRUDL 
-- Create – click on the map prompts for name and rate
+- Create – click on the map prompts modal for name and rate
 - Read – Selected location details (see below) 
 - Update – can update location rate
 - Delete – can delete a location
@@ -45,13 +45,14 @@ Here is the format of the location object:
 ## Services
 ```js
 export const locService = {
-    query,
+   query,
     getById,
     remove,
     save,
     setFilterBy,
     setSortBy,
-    getLocCountByRateMap
+    getLocCountByRateMap,
+    getLocCountByLastUpdated
 }
 
 export const mapService = {
@@ -78,7 +79,10 @@ window.app = {
     onCopyLoc,
     onShareLoc,
     onSetSortBy,
-    onSetFilterBy
+    onSetFilterBy,
+    onCloseModal,
+    onSaveLoc,
+    onToggleTheme,
 }
 ```
 
@@ -86,6 +90,7 @@ Here is a sample usage:
 ```html
 <button onclick="app.onCopyLoc()">Copy location</button>
 <button onclick="app.onShareLoc()">Share location</button>
+<button onclick="app.onToggleTheme()">Toggle Theme</button>
 ```
 
 
