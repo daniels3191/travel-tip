@@ -8,9 +8,13 @@
     <title>TravelTip</title>
 </head>
 
-<body>
+<body class="blue-theme">
     <header>
+        <section class="head">
         <h1>TravelTip</h1>
+        <button onclick="app.onToggleTheme()">Toggle Theme</button>
+        </section>
+  
         <section class="selected-loc">
             <h2>Location: <span class="loc-name"></span> <span class="loc-rate"></span></h2>
             <h4 class="loc-address"></h4>
@@ -73,7 +77,7 @@
             </section>
         </div>
         <dialog id="dialog">
-            <form onsubmit="app.onSaveLoc(this)" method="dialog">
+            <form onsubmit="app.onSaveLoc(event)" method="dialog">
                 <input class="address" type="text" value="" required>
                 <input class="rate" type="text" value="3" pattern="[1-5]" required>
                 <div class="actions">

@@ -18,6 +18,7 @@ window.app = {
     onSetFilterBy,
     onCloseModal,
     onSaveLoc,
+    onToggleTheme,
 }
 
 function onInit() {
@@ -109,14 +110,16 @@ function onAddLoc(geo) {
     dialog.showModal()
 }
 
-function onSaveLoc(elForm) {
+function onSaveLoc(ev) {
+    ev.preventDefault()
 
-    const elAddress = elForm.querySelector('.address')
+    const elAddress = document.querySelector('form .address')
     const locName = elAddress.value
-    const elRate = elForm.querySelector('.rate')
+    const elRate = document.querySelector('form .rate')
     const rate = elRate.value
     const elDialog = document.getElementById('dialog')
     const location = JSON.parse(elDialog.dataset.location)
+    dialog.close()
 
     if (!location['id']) {
         const loc = {
@@ -352,4 +355,12 @@ function cleanStats(stats) {
 
 function onCloseModal() {
     dialog.close()
+}
+
+function onToggleTheme(){
+    const elBody = document.querySelector('body')
+    elBody.classList.toggle('blue-theme')
+    console.log(elBody);
+    
+    
 }
