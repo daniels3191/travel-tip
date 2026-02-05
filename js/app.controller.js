@@ -3,6 +3,7 @@ import { locService } from './services/loc.service.js'
 import { mapService } from './services/map.service.js'
 
 window.onload = onInit
+var gUserPos = null
 
 // To make things easier in this project structure 
 // functions that are called from DOM are defined on a global app object
@@ -44,6 +45,11 @@ function renderLocs(locs) {
         <li class="loc ${className}" data-id="${loc.id}">
             <h4>  
                 <span>${loc.name}</span>
+
+                 <span class="distance ${gUserPos ? "" : "hidden"}">Distance
+                ${gUserPos ? utilService.getDistance(gUserPos, loc.geo, "K") + " KM" : ""}
+                </span>
+
                 <span title="${loc.rate} stars">${'★'.repeat(loc.rate)}</span>
             </h4>
             <p class="muted">
@@ -166,6 +172,7 @@ function loadAndRenderLocs() {
 function onPanToUserPos() {
     mapService.getUserPosition()
         .then(latLng => {
+            gUserPos = latLng
             mapService.panTo({ ...latLng, zoom: 15 })
             unDisplayLoc()
             loadAndRenderLocs()
